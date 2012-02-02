@@ -15,9 +15,9 @@ public class Factory {
       this.assetManager = assetManager;
   }
     
-  public Geometry buildCube(String name, float x, float y, float z, 
+  public Geometry buildSimpleCube(String name, Vector3f center, 
           float xExtent, float yExtent, float zExtent, ColorRGBA color) {
-    Box box = new Box(new Vector3f(x, y, z), xExtent, yExtent, zExtent);
+    Box box = new Box(center, xExtent, yExtent, zExtent);
     Geometry cube = new Geometry(name, box);
     Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
     mat.setColor("Color", color);

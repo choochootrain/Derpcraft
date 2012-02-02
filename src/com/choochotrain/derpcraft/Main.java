@@ -10,6 +10,9 @@ import com.jme3.scene.shape.Box;
 
 public class Main extends SimpleApplication {
 
+    private Factory factory;
+    public static float UNIT_EXTENT = 0.5f;
+    
     public static void main(String[] args) {
         Main app = new Main();
         app.start();
@@ -17,14 +20,18 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        Box b = new Box(Vector3f.ZERO, 1, 1, 1);
-        Geometry geom = new Geometry("Box", b);
-
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", ColorRGBA.Blue);
-        geom.setMaterial(mat);
-
-        rootNode.attachChild(geom);
+        factory = new Factory(assetManager);
+        
+        for(int i = -5; i < 6; i++) {
+            for(int j = -5; j < 6; j++) {
+                for(int k = -5; k < 6; k++) {
+                    if(Math.random() > 0.8) {
+                        Geometry geom = factory.buildSimpleCube("Box", new Vector3f(i,j,k), UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT, ColorRGBA.randomColor());
+                        rootNode.attachChild(geom);
+                    }
+                }
+            }
+        }
     }
 
     @Override
