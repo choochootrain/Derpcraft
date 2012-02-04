@@ -22,10 +22,14 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
+import com.jme3.scene.Mesh.Mode;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial.BatchHint;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
 import java.util.HashMap;
+import java.util.Iterator;
 import jme3tools.optimize.GeometryBatchFactory;
 
 public class Main extends SimpleApplication implements ActionListener {
@@ -36,9 +40,9 @@ public class Main extends SimpleApplication implements ActionListener {
     private CharacterControl player;
     private Vector3f walkDirection = new Vector3f();
     private Node shootables;
-    private Geometry mark;
     private CompoundCollisionShape blocks;
     private boolean left = false, right = false, up = false, down = false;
+    private Geometry selector;
     
     public static float UNIT_EXTENT = 0.5f;
     
@@ -56,7 +60,7 @@ public class Main extends SimpleApplication implements ActionListener {
         viewPort.setBackgroundColor(new ColorRGBA(0.4f, 0.8f, 1f, 1f));
         flyCam.setMoveSpeed(100);
         initKeys();
-        initMark();
+        initSelector();
         
         factory = new Factory(assetManager);
         
@@ -69,17 +73,23 @@ public class Main extends SimpleApplication implements ActionListener {
         blocks.addChildShape(floorShape, floorVector);
         
         Node shootablesUnoptimized = new Node("Shootables");
+        BoxCollisionShape s = new BoxCollisionShape(new Vector3f(5f, 0.5f, 5f));
+        blocks.addChildShape(s, new Vector3f(0,-6,0));
         
-        for(int i = -5; i < 6; i++) {
-            for(int j = -5; j < 6; j++) {
-                for(int k = -5; k < 6; k++) {
+        for(int i = -15; i < 16; i++) {
+            for(int k = -15; k < 16; k++) {
+                for(int j = 4; j < (int)(6 + 0.5 * Math.random() + 0.5 * Math.sin(i) + 0.5 * Math.sin(k) + 0.5); j++) {
                     if(Math.random() > 0) {
                         Vector3f location = new Vector3f(i,j,k);
-                        Geometry geom = factory.buildSimpleCube("Box"+i+" "+j+" "+k, location, UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT, ColorRGBA.randomColor());
+                        Geometry geom = factory.buildSimpleCube("Box"+i+" "+j+" "+k, location,
+                                UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT,
+                                ColorRGBA.randomColor());
                         shootablesUnoptimized.attachChild(geom);
                         
-                        BoxCollisionShape collisionShape = new BoxCollisionShape(new Vector3f(UNIT_EXTENT,UNIT_EXTENT,UNIT_EXTENT));
-                        blocks.addChildShape(collisionShape, location);
+                        if(j >= 5) {
+                            BoxCollisionShape collisionShape = new BoxCollisionShape(new Vector3f(UNIT_EXTENT,UNIT_EXTENT,UNIT_EXTENT));
+                            blocks.addChildShape(collisionShape, location);
+                        }
                     }
                 }
             }
@@ -96,14 +106,15 @@ public class Main extends SimpleApplication implements ActionListener {
         
         shootables = GeometryBatchFactory.optimize(shootablesUnoptimized, false);
         rootNode.attachChild(shootables);
+        rootNode.attachChild(selector);
         bulletAppState.getPhysicsSpace().add(landscape);
         bulletAppState.getPhysicsSpace().add(player);
     }
 
     @Override
     public void simpleUpdate(float tpf) {
-        Vector3f camDir = cam.getDirection().clone().multLocal(0.6f);
-        Vector3f camLeft = cam.getLeft().clone().multLocal(0.4f);
+        Vector3f camDir = cam.getDirection().clone().multLocal(0.07f);
+        Vector3f camLeft = cam.getLeft().clone().multLocal(0.11f);
         walkDirection.set(0, 0, 0);
         if (left)  { walkDirection.addLocal(camLeft); }
         if (right) { walkDirection.addLocal(camLeft.negate()); }
@@ -111,6 +122,12 @@ public class Main extends SimpleApplication implements ActionListener {
         if (down)  { walkDirection.addLocal(camDir.negate()); }
         player.setWalkDirection(walkDirection);
         cam.setLocation(player.getPhysicsLocation());
+        
+        CollisionResults results = new CollisionResults();
+        Ray ray = new Ray(cam.getLocation(), cam.getDirection());
+        shootables.collideWith(ray, results);
+        if(results.getClosestCollision() != null)    
+            selector.setLocalTranslation(results.getClosestCollision().getGeometry().getLocalTranslation());
     }
 
     @Override
@@ -154,14 +171,10 @@ public class Main extends SimpleApplication implements ActionListener {
                 // Let's interact - we mark the hit with a red dot.
                 Geometry g = closest.getGeometry();
                 shootables.detachChild(g);
+                Iterator iter = blocks.getChildren().iterator();
                 g.scale(10);
                 guiNode.attachChild(g);
                 g.move(100, 100, 100);
-                mark.setLocalTranslation(closest.getContactPoint());
-                rootNode.attachChild(mark);
-            } else {
-                // No hits? Then remove the red mark.
-                rootNode.detachChild(mark);
             }
         }
     }
@@ -182,24 +195,12 @@ public class Main extends SimpleApplication implements ActionListener {
     }
     
     /** A red ball that marks the last spot that was "hit" by the "shot". */
-    protected void initMark() {
-        Sphere sphere = new Sphere(30, 30, 0.2f);
-        mark = new Geometry("BOOM!", sphere);
+    protected void initSelector() {
+        Box wire = new Box(Vector3f.ZERO, 0.6f,0.6f,0.6f);
+        wire.setMode(Mesh.Mode.Lines);
+        selector = new Geometry("BOOM!", wire);
         Material mark_mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mark_mat.setColor("Color", ColorRGBA.Red);
-        mark.setMaterial(mark_mat);
+        mark_mat.setColor("Color", ColorRGBA.Black);
+        selector.setMaterial(mark_mat);
     }
- 
-  /** A centred plus sign to help the player aim. */
-  protected void initCrossHairs() {
-    guiNode.detachAllChildren();
-    guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
-    BitmapText ch = new BitmapText(guiFont, false);
-    ch.setSize(guiFont.getCharSet().getRenderedSize() * 2);
-    ch.setText("+"); // crosshairs
-    ch.setLocalTranslation( // center
-      settings.getWidth() / 2 - guiFont.getCharSet().getRenderedSize() / 3 * 2,
-      settings.getHeight() / 2 + ch.getLineHeight() / 2, 0);
-    guiNode.attachChild(ch);
-  }
 }
