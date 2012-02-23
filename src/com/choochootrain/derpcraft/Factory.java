@@ -1,4 +1,4 @@
-package com.choochotrain.derpcraft;
+package com.choochootrain.derpcraft;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;

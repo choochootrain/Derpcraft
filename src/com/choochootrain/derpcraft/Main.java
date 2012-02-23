@@ -1,4 +1,4 @@
-package com.choochotrain.derpcraft;
+package com.choochootrain.derpcraft;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;

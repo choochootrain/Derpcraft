@@ -1,4 +1,4 @@
-package com.choochotrain.derpcraft;
+package com.choochootrain.derpcraft;
 
 import com.jme3.math.ColorRGBA;
 
