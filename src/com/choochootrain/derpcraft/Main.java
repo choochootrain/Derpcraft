@@ -161,19 +161,8 @@ public class Main extends SimpleApplication implements ActionListener {
                 debris.killAllParticles();
                 debris.setStartColor((ColorRGBA)g.getUserData("color"));
                 debris.setEndColor((ColorRGBA)g.getUserData("color"));
-                String s = g.getName();
-                System.out.println("NAME: " + s);
-                s = s.substring(3);
-                StringTokenizer st = new StringTokenizer(s);
-                float x = 0,y = 0,z = 0;
-                try {
-                    x = (float)Integer.parseInt(st.nextToken());
-                    y = (float)Integer.parseInt(st.nextToken());
-                    z = (float)Integer.parseInt(st.nextToken());
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
-                debris.setLocalTranslation(x*10, y*10, z*10);
+                float[] coords = getCoordinates(g.getName().substring(3));
+                debris.setLocalTranslation(coords[0]*10, coords[1]*10, coords[2]*10);
                 debris.emitAllParticles();
                 
                 guiNode.attachChild(g);
@@ -201,9 +190,9 @@ public class Main extends SimpleApplication implements ActionListener {
         debris = new ParticleEmitter("Debris", Type.Triangle, 15);
         debris.setSelectRandomImage(true);
         debris.setRandomAngle(true);
-        debris.setRotateSpeed(FastMath.TWO_PI * 4);
+        debris.setRotateSpeed(FastMath.TWO_PI);
         debris.setStartColor(new ColorRGBA(1f, 0.59f, 0.28f, 1));
-        debris.setEndColor(new ColorRGBA(.5f, 0.5f, 0.5f, 0.5f));
+        debris.setEndColor(new ColorRGBA(0.7f, 0.7f, 0.7f, 1.0f));
         debris.setStartSize(5f);
         debris.setEndSize(3f);
 
@@ -212,8 +201,6 @@ public class Main extends SimpleApplication implements ActionListener {
         debris.setGravity(0, 10f, 0);
         debris.setLowLife(1.4f);
         debris.setHighLife(1.5f);
-        debris.setInitialVelocity(new Vector3f(0, 15, 0));
-        debris.setVelocityVariation(.60f);
         debris.setImagesX(3);
         debris.setImagesY(3);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
@@ -231,5 +218,19 @@ public class Main extends SimpleApplication implements ActionListener {
                 settings.getWidth() / 2 - guiFont.getCharSet().getRenderedSize() / 3 * 2,
                 settings.getHeight() / 2 + ch.getLineHeight() / 2, 0);
         guiNode.attachChild(ch);
+    }
+    
+    private float[] getCoordinates(String name) {
+        StringTokenizer st = new StringTokenizer(name);
+        float coords[] = new float[3];
+        try {
+            coords[0] = (float)Integer.parseInt(st.nextToken());
+            coords[1] = (float)Integer.parseInt(st.nextToken());
+            coords[2] = (float)Integer.parseInt(st.nextToken());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        
+        return coords;
     }
 }

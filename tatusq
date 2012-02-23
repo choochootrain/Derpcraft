@@ -1,0 +1,148 @@
+[1mdiff --git a/build/assets.jar b/build/assets.jar[m
+[1mindex fcb461a..891782b 100644[m
+Binary files a/build/assets.jar and b/build/assets.jar differ
+[1mdiff --git a/build/built-jar.properties b/build/built-jar.properties[m
+[1mindex e696415..cc0c2aa 100644[m
+[1m--- a/build/built-jar.properties[m
+[1m+++ b/build/built-jar.properties[m
+[36m@@ -1,4 +1,4 @@[m
+[31m-#Sun, 05 Feb 2012 13:12:59 -0800[m
+[32m+[m[32m#Thu, 23 Feb 2012 14:56:56 -0800[m
+ [m
+ [m
+ /home/hp/jme3_projects/Derpcraft=[m
+[1mdiff --git a/build/classes/.netbeans_automatic_build b/build/classes/.netbeans_automatic_build[m
+[1mdeleted file mode 100644[m
+[1mindex e69de29..0000000[m
+[1mdiff --git a/build/classes/com/ardorcraft/generators/GeneratorViewer$8.class b/build/classes/com/ardorcraft/generators/GeneratorViewer$8.class[m
+[1mdeleted file mode 100644[m
+[1mindex 4a4a492..0000000[m
+Binary files a/build/classes/com/ardorcraft/generators/GeneratorViewer$8.class and /dev/null differ
+[1mdiff --git a/build/classes/com/ardorcraft/generators/GeneratorViewer$9$1.class b/build/classes/com/ardorcraft/generators/GeneratorViewer$9$1.class[m
+[1mdeleted file mode 100644[m
+[1mindex 655b283..0000000[m
+Binary files a/build/classes/com/ardorcraft/generators/GeneratorViewer$9$1.class and /dev/null differ
+[1mdiff --git a/build/classes/com/ardorcraft/generators/GeneratorViewer$9$2.class b/build/classes/com/ardorcraft/generators/GeneratorViewer$9$2.class[m
+[1mdeleted file mode 100644[m
+[1mindex 1d4a18e..0000000[m
+Binary files a/build/classes/com/ardorcraft/generators/GeneratorViewer$9$2.class and /dev/null differ
+[1mdiff --git a/build/classes/com/ardorcraft/generators/GeneratorViewer$9.class b/build/classes/com/ardorcraft/generators/GeneratorViewer$9.class[m
+[1mdeleted file mode 100644[m
+[1mindex 4790b4c..0000000[m
+Binary files a/build/classes/com/ardorcraft/generators/GeneratorViewer$9.class and /dev/null differ
+[1mdiff --git a/build/classes/com/ardorcraft/generators/GeneratorViewer$DeamonThreadFactory.class b/build/classes/com/ardorcraft/generators/GeneratorViewer$DeamonThreadFactory.class[m
+[1mdeleted file mode 100644[m
+[1mindex 222edae..0000000[m
+Binary files a/build/classes/com/ardorcraft/generators/GeneratorViewer$DeamonThreadFactory.class and /dev/null differ
+[1mdiff --git a/build/classes/com/ardorcraft/generators/GeneratorViewer$LocalBlockModifier.class b/build/classes/com/ardorcraft/generators/GeneratorViewer$LocalBlockModifier.class[m
+[1mdeleted file mode 100644[m
+[1mindex 0d2403a..0000000[m
+Binary files a/build/classes/com/ardorcraft/generators/GeneratorViewer$LocalBlockModifier.class and /dev/null differ
+[1mdiff --git a/build/classes/com/ardorcraft/generators/GeneratorViewer$PaintPanel.class b/build/classes/com/ardorcraft/generators/GeneratorViewer$PaintPanel.class[m
+[1mdeleted file mode 100644[m
+[1mindex ddea06c..0000000[m
+Binary files a/build/classes/com/ardorcraft/generators/GeneratorViewer$PaintPanel.class and /dev/null differ
+[1mdiff --git a/build/classes/com/choochootrain/derpcraft/Main.class b/build/classes/com/choochootrain/derpcraft/Main.class[m
+[1mindex 4c21947..b6e6e72 100644[m
+Binary files a/build/classes/com/choochootrain/derpcraft/Main.class and b/build/classes/com/choochootrain/derpcraft/Main.class differ
+[1mdiff --git a/build/manifest.mf b/build/manifest.mf[m
+[1mdeleted file mode 100644[m
+[1mindex 7e1ad4b..0000000[m
+[1m--- a/build/manifest.mf[m
+[1m+++ /dev/null[m
+[36m@@ -1 +0,0 @@[m
+[31m-X-Comment: Created with jMonkeyPlatform[m
+[1mdiff --git a/dist/MyGame-Linux.zip b/dist/MyGame-Linux.zip[m
+[1mdeleted file mode 100644[m
+[1mindex 41fd0be..0000000[m
+Binary files a/dist/MyGame-Linux.zip and /dev/null differ
+[1mdiff --git a/dist/MyGame-MacOSX.zip b/dist/MyGame-MacOSX.zip[m
+[1mdeleted file mode 100644[m
+[1mindex db9bde1..0000000[m
+Binary files a/dist/MyGame-MacOSX.zip and /dev/null differ
+[1mdiff --git a/dist/MyGame-Windows.zip b/dist/MyGame-Windows.zip[m
+[1mdeleted file mode 100644[m
+[1mindex dc58231..0000000[m
+Binary files a/dist/MyGame-Windows.zip and /dev/null differ
+[1mdiff --git a/dist/MyGame.jar b/dist/MyGame.jar[m
+[1mdeleted file mode 100644[m
+[1mindex e09d9d9..0000000[m
+Binary files a/dist/MyGame.jar and /dev/null differ
+[1mdiff --git a/dist/lib/assets.jar b/dist/lib/assets.jar[m
+[1mdeleted file mode 100644[m
+[1mindex fcb461a..0000000[m
+Binary files a/dist/lib/assets.jar and /dev/null differ
+[1mdiff --git a/dist/liblwjgl64.so b/dist/liblwjgl64.so[m
+[1mdeleted file mode 100644[m
+[1mindex 4ad9257..0000000[m
+Binary files a/dist/liblwjgl64.so and /dev/null differ
+[1mdiff --git a/dist/libopenal64.so b/dist/libopenal64.so[m
+[1mdeleted file mode 100644[m
+[1mindex 361d137..0000000[m
+Binary files a/dist/libopenal64.so and /dev/null differ
+[1mdiff --git a/src/com/choochootrain/derpcraft/Main.java b/src/com/choochootrain/derpcraft/Main.java[m
+[1mindex a8b81b8..fa30507 100644[m
+[1m--- a/src/com/choochootrain/derpcraft/Main.java[m
+[1m+++ b/src/com/choochootrain/derpcraft/Main.java[m
+[36m@@ -161,19 +161,8 @@[m [mpublic class Main extends SimpleApplication implements ActionListener {[m
+                 debris.killAllParticles();[m
+                 debris.setStartColor((ColorRGBA)g.getUserData("color"));[m
+                 debris.setEndColor((ColorRGBA)g.getUserData("color"));[m
+[31m-                String s = g.getName();[m
+[31m-                System.out.println("NAME: " + s);[m
+[31m-                s = s.substring(3);[m
+[31m-                StringTokenizer st = new StringTokenizer(s);[m
+[31m-                float x = 0,y = 0,z = 0;[m
+[31m-                try {[m
+[31m-                    x = (float)Integer.parseInt(st.nextToken());[m
+[31m-                    y = (float)Integer.parseInt(st.nextToken());[m
+[31m-                    z = (float)Integer.parseInt(st.nextToken());[m
+[31m-                } catch(Exception e) {[m
+[31m-                    e.printStackTrace();[m
+[31m-                }[m
+[31m-                debris.setLocalTranslation(x*10, y*10, z*10);[m
+[32m+[m[32m                float[] coords = getCoordinates(g.getName().substring(3));[m
+[32m+[m[32m                debris.setLocalTranslation(coords[0]*10, coords[1]*10, coords[2]*10);[m
+                 debris.emitAllParticles();[m
+                 [m
+                 guiNode.attachChild(g);[m
+[36m@@ -201,9 +190,9 @@[m [mpublic class Main extends SimpleApplication implements ActionListener {[m
+         debris = new ParticleEmitter("Debris", Type.Triangle, 15);[m
+         debris.setSelectRandomImage(true);[m
+         debris.setRandomAngle(true);[m
+[31m-        debris.setRotateSpeed(FastMath.TWO_PI * 4);[m
+[32m+[m[32m        debris.setRotateSpeed(FastMath.TWO_PI);[m
+         debris.setStartColor(new ColorRGBA(1f, 0.59f, 0.28f, 1));[m
+[31m-        debris.setEndColor(new ColorRGBA(.5f, 0.5f, 0.5f, 0.5f));[m
+[32m+[m[32m        debris.setEndColor(new ColorRGBA(0.7f, 0.7f, 0.7f, 1.0f));[m
+         debris.setStartSize(5f);[m
+         debris.setEndSize(3f);[m
+ [m
+[36m@@ -212,8 +201,6 @@[m [mpublic class Main extends SimpleApplication implements ActionListener {[m
+         debris.setGravity(0, 10f, 0);[m
+         debris.setLowLife(1.4f);[m
+         debris.setHighLife(1.5f);[m
+[31m-        debris.setInitialVelocity(new Vector3f(0, 15, 0));[m
+[31m-        debris.setVelocityVariation(.60f);[m
+         debris.setImagesX(3);[m
+         debris.setImagesY(3);[m
+         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");[m
+[36m@@ -232,4 +219,18 @@[m [mpublic class Main extends SimpleApplication implements ActionListener {[m
+                 settings.getHeight() / 2 + ch.getLineHeight() / 2, 0);[m
+         guiNode.attachChild(ch);[m
+     }[m
+[32m+[m[41m    [m
+[32m+[m[32m    private float[] getCoordinates(String name) {[m
+[32m+[m[32m        StringTokenizer st = new StringTokenizer(name);[m
+[32m+[m[32m        float coords[] = new float[3];[m
+[32m+[m[32m        try {[m
+[32m+[m[32m            coords[0] = (float)Integer.parseInt(st.nextToken());[m
+[32m+[m[32m            coords[1] = (float)Integer.parseInt(st.nextToken());[m
+[32m+[m[32m            coords[2] = (float)Integer.parseInt(st.nextToken());[m
+[32m+[m[32m        } catch(Exception e) {[m
+[32m+[m[32m            e.printStackTrace();[m
+[32m+[m[32m        }[m
+[32m+[m[41m        [m
+[32m+[m[32m        return coords;[m
+[32m+[m[32m    }[m
+ }[m
