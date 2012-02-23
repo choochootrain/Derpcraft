@@ -44,7 +44,6 @@ public class Main extends SimpleApplication implements ActionListener {
     private boolean left = false, right = false, up = false, down = false;
     private ParticleEmitter debris;
     private Node debrisNode;
-    private int t;
     
     public static float UNIT_EXTENT = 5.0f;
     
@@ -69,7 +68,6 @@ public class Main extends SimpleApplication implements ActionListener {
         renderManager.preloadScene(rootNode);
         
         factory = new Factory(assetManager);
-        
         blocks = new CompoundCollisionShape();
         
         Vector3f floorVector = new Vector3f(0, -6f, 0);
@@ -85,10 +83,10 @@ public class Main extends SimpleApplication implements ActionListener {
         
         for(int i = -15; i < 16; i++) {
             for(int k = -15; k < 16; k++) {
-                for(int j = 4; j < (int)(6 + 0.5 * Math.random() + 0.5); j++) {
+                for(int j = 4; j < 6; j++) {
                     if(Math.random() > 0) {
                         Vector3f location = new Vector3f(i*10,j*10,k*10);
-                        ColorRGBA c = ColorRGBA.randomColor();
+                        ColorRGBA c = Block.getColor((int)(Math.random() * 8));
                         Geometry geom = factory.buildSimpleCube("Box"+i+" "+j+" "+k, location,
                                 UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT, c);
                         shootables.attachChild(geom);
@@ -101,13 +99,7 @@ public class Main extends SimpleApplication implements ActionListener {
                     }
                 }
             }
-        }
-        
-        ColorRGBA c = ColorRGBA.randomColor();
-        Geometry geom = factory.buildSimpleCube("dsf0 0 0", Vector3f.ZERO,
-                UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT, c);
-        shootables.attachChild(geom);
-        geom.setUserData("color", c);
+        }       
 
         landscape = new RigidBodyControl(blocks, 0);
         
@@ -135,10 +127,6 @@ public class Main extends SimpleApplication implements ActionListener {
         if (down)  { walkDirection.addLocal(camDir.negate()); }
         player.setWalkDirection(walkDirection);
         cam.setLocation(player.getPhysicsLocation());
-        
-        CollisionResults results = new CollisionResults();
-        Ray ray = new Ray(cam.getLocation(), cam.getDirection());
-        shootables.collideWith(ray, results);
     }
 
     @Override
