@@ -12,6 +12,7 @@ import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh.Type;
+import com.jme3.effect.shapes.EmitterSphereShape;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -22,12 +23,14 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
+import java.util.StringTokenizer;
 
 public class Main extends SimpleApplication implements ActionListener {
 
@@ -39,10 +42,11 @@ public class Main extends SimpleApplication implements ActionListener {
     private Node shootables;
     private CompoundCollisionShape blocks;
     private boolean left = false, right = false, up = false, down = false;
-    private Geometry selector;
     private ParticleEmitter debris;
+    private Node debrisNode;
+    private int t;
     
-    public static float UNIT_EXTENT = 0.5f;
+    public static float UNIT_EXTENT = 5.0f;
     
     public static void main(String[] args) {
         Main app = new Main();
@@ -60,7 +64,6 @@ public class Main extends SimpleApplication implements ActionListener {
         viewPort.setBackgroundColor(new ColorRGBA(0.4f, 0.8f, 1f, 1f));
         flyCam.setMoveSpeed(100);
         initKeys();
-        initSelector();
         initDebris();
         initCrosshairs();
         renderManager.preloadScene(rootNode);
@@ -70,9 +73,9 @@ public class Main extends SimpleApplication implements ActionListener {
         blocks = new CompoundCollisionShape();
         
         Vector3f floorVector = new Vector3f(0, -6f, 0);
-        Geometry floor = factory.buildSimpleCube("floor", floorVector, 5f, 0.5f, 5, ColorRGBA.Brown);
+        Geometry floor = factory.buildSimpleCube("floor", floorVector, 50f, 0.5f, 50f, ColorRGBA.Black);
         rootNode.attachChild(floor);
-        BoxCollisionShape floorShape = new BoxCollisionShape(new Vector3f(5f, 0.5f, 5));
+        BoxCollisionShape floorShape = new BoxCollisionShape(new Vector3f(50f, 0.5f, 50f));
         blocks.addChildShape(floorShape, floorVector);
         
         BoxCollisionShape s = new BoxCollisionShape(new Vector3f(5f, 0.5f, 5f));
@@ -84,7 +87,7 @@ public class Main extends SimpleApplication implements ActionListener {
             for(int k = -15; k < 16; k++) {
                 for(int j = 4; j < (int)(6 + 0.5 * Math.random() + 0.5); j++) {
                     if(Math.random() > 0) {
-                        Vector3f location = new Vector3f(i,j,k);
+                        Vector3f location = new Vector3f(i*10,j*10,k*10);
                         ColorRGBA c = ColorRGBA.randomColor();
                         Geometry geom = factory.buildSimpleCube("Box"+i+" "+j+" "+k, location,
                                 UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT, c);
@@ -100,25 +103,31 @@ public class Main extends SimpleApplication implements ActionListener {
             }
         }
         
+        ColorRGBA c = ColorRGBA.randomColor();
+        Geometry geom = factory.buildSimpleCube("dsf0 0 0", Vector3f.ZERO,
+                UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT, c);
+        shootables.attachChild(geom);
+        geom.setUserData("color", c);
+
         landscape = new RigidBodyControl(blocks, 0);
         
-        CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(0.4f, 1.5f, 1);
+        CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(4f, 7f, 1);
         player = new CharacterControl(capsuleShape, 0.05f);
-        player.setJumpSpeed(20);
-        player.setFallSpeed(30);
+        player.setJumpSpeed(75);
+        player.setFallSpeed(40);
         player.setGravity(10);
-        player.setPhysicsLocation(new Vector3f(0, 10, 0));
+        player.setPhysicsLocation(new Vector3f(0, 75, 0));
         
         rootNode.attachChild(shootables);
-        rootNode.attachChild(selector);
+        rootNode.attachChild(debrisNode);
         bulletAppState.getPhysicsSpace().add(landscape);
         bulletAppState.getPhysicsSpace().add(player);
     }
 
     @Override
     public void simpleUpdate(float tpf) {
-        Vector3f camDir = cam.getDirection().clone().multLocal(0.07f);
-        Vector3f camLeft = cam.getLeft().clone().multLocal(0.11f);
+        Vector3f camDir = cam.getDirection().clone();
+        Vector3f camLeft = cam.getLeft().clone();
         walkDirection.set(0, 0, 0);
         if (left)  { walkDirection.addLocal(camLeft); }
         if (right) { walkDirection.addLocal(camLeft.negate()); }
@@ -130,8 +139,6 @@ public class Main extends SimpleApplication implements ActionListener {
         CollisionResults results = new CollisionResults();
         Ray ray = new Ray(cam.getLocation(), cam.getDirection());
         shootables.collideWith(ray, results);
-        if(results.getClosestCollision() != null)    
-            selector.setLocalTranslation(results.getClosestCollision().getGeometry().getLocalTranslation());
     }
 
     @Override
@@ -158,29 +165,30 @@ public class Main extends SimpleApplication implements ActionListener {
             Ray ray = new Ray(cam.getLocation(), cam.getDirection());
             // 3. Collect intersections between Ray and Shootables in results list.
             shootables.collideWith(ray, results);
-            // 4. Print the results
-            System.out.println("----- Collisions? " + results.size() + "-----");
-            for (int i = 0; i < results.size(); i++) {
-                // For each hit, we know distance, impact point, name of geometry.
-                float dist = results.getCollision(i).getDistance();
-                Vector3f pt = results.getCollision(i).getContactPoint();
-                String hit = results.getCollision(i).getGeometry().getName();
-                System.out.println("* Collision #" + i);
-                System.out.println("  You shot " + hit + " at " + pt + ", " + dist + " wu away.");
-            }
             // 5. Use the results (we mark the hit object)
             if (results.size() > 0) {
                 CollisionResult closest = results.getClosestCollision();
                 Geometry g = closest.getGeometry();
                 shootables.detachChild(g);
                 debris.killAllParticles();
+                debris.setStartColor((ColorRGBA)g.getUserData("color"));
                 debris.setEndColor((ColorRGBA)g.getUserData("color"));
-                debris.setLocalTranslation(g.getLocalTranslation());
+                String s = g.getName();
+                System.out.println("NAME: " + s);
+                s = s.substring(3);
+                StringTokenizer st = new StringTokenizer(s);
+                float x = 0,y = 0,z = 0;
+                try {
+                    x = (float)Integer.parseInt(st.nextToken());
+                    y = (float)Integer.parseInt(st.nextToken());
+                    z = (float)Integer.parseInt(st.nextToken());
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+                debris.setLocalTranslation(x*10, y*10, z*10);
                 debris.emitAllParticles();
                 
-                g.scale(10);
                 guiNode.attachChild(g);
-                g.move(100, 100, 100);
             }
         }
     }
@@ -200,29 +208,20 @@ public class Main extends SimpleApplication implements ActionListener {
         inputManager.addListener(this, "Shoot");
     }
     
-    /** A red ball that marks the last spot that was "hit" by the "shot". */
-    protected void initSelector() {
-        Box wire = new Box(Vector3f.ZERO, 0.6f,0.6f,0.6f);
-        wire.setMode(Mesh.Mode.Lines);
-        selector = new Geometry("BOOM!", wire);
-        Material mark_mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mark_mat.setColor("Color", ColorRGBA.Black);
-        selector.setMaterial(mark_mat);
-    }
-    
     private void initDebris() {
+        debrisNode = new Node("debris node");
         debris = new ParticleEmitter("Debris", Type.Triangle, 15);
         debris.setSelectRandomImage(true);
         debris.setRandomAngle(true);
         debris.setRotateSpeed(FastMath.TWO_PI * 4);
         debris.setStartColor(new ColorRGBA(1f, 0.59f, 0.28f, 1));
         debris.setEndColor(new ColorRGBA(.5f, 0.5f, 0.5f, 0.5f));
-        debris.setStartSize(.2f);
-        debris.setEndSize(.2f);
+        debris.setStartSize(5f);
+        debris.setEndSize(3f);
 
-//        debris.setShape(new EmitterSphereShape(Vector3f.ZERO, .05f));
+        debris.setShape(new EmitterSphereShape(Vector3f.ZERO, 1.5f));
         debris.setParticlesPerSec(0);
-        debris.setGravity(0, 12f, 0);
+        debris.setGravity(0, 10f, 0);
         debris.setLowLife(1.4f);
         debris.setHighLife(1.5f);
         debris.setInitialVelocity(new Vector3f(0, 15, 0));
@@ -232,7 +231,7 @@ public class Main extends SimpleApplication implements ActionListener {
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
         mat.setTexture("Texture", assetManager.loadTexture("Effects/Explosion/Debris.png"));
         debris.setMaterial(mat);
-        rootNode.attachChild(debris);
+        debrisNode.attachChild(debris);
     }
     
     protected void initCrosshairs() {
