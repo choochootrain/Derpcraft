@@ -13,6 +13,7 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh.Type;
 import com.jme3.effect.shapes.EmitterSphereShape;
+import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -35,6 +36,7 @@ import java.util.StringTokenizer;
 public class Main extends SimpleApplication implements ActionListener {
 
     private Factory factory;
+    private Inventory inventory;
     private BulletAppState bulletAppState;
     private RigidBodyControl landscape;
     private CharacterControl player;
@@ -44,6 +46,7 @@ public class Main extends SimpleApplication implements ActionListener {
     private boolean left = false, right = false, up = false, down = false;
     private ParticleEmitter debris;
     private Node debrisNode;
+    private Node inventoryNode;
     
     public static float UNIT_EXTENT = 5.0f;
     
@@ -68,6 +71,12 @@ public class Main extends SimpleApplication implements ActionListener {
         renderManager.preloadScene(rootNode);
         
         factory = new Factory(assetManager);
+        
+        inventoryNode = new Node("inventory");
+        inventory = new Inventory(inventoryNode, factory, 
+                guiFont, settings.getWidth(), settings.getHeight());
+        guiNode.attachChild(inventoryNode);
+        
         blocks = new CompoundCollisionShape();
         
         Vector3f floorVector = new Vector3f(0, -6f, 0);
@@ -86,11 +95,13 @@ public class Main extends SimpleApplication implements ActionListener {
                 for(int j = 4; j < 6; j++) {
                     if(Math.random() > 0) {
                         Vector3f location = new Vector3f(i*10,j*10,k*10);
-                        ColorRGBA c = Block.getColor((int)(Math.random() * 8));
+                        int type = (int)(Math.random() * 7);
+                        ColorRGBA c = Block.getColor(type);
                         Geometry geom = factory.buildSimpleCube("Box"+i+" "+j+" "+k, location,
                                 UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT, c);
                         shootables.attachChild(geom);
                         geom.setUserData("color", c);
+                        geom.setUserData("block type", type);
                         
                         if(j >= 5) {
                             BoxCollisionShape collisionShape = new BoxCollisionShape(new Vector3f(UNIT_EXTENT,UNIT_EXTENT,UNIT_EXTENT));
@@ -165,7 +176,7 @@ public class Main extends SimpleApplication implements ActionListener {
                 debris.setLocalTranslation(coords[0]*10, coords[1]*10, coords[2]*10);
                 debris.emitAllParticles();
                 
-                guiNode.attachChild(g);
+                inventory.addBlock(g);
             }
         }
     }
@@ -232,5 +243,9 @@ public class Main extends SimpleApplication implements ActionListener {
         }
         
         return coords;
+    }
+    
+    public BitmapFont getGuiFont() {
+        return guiFont;
     }
 }

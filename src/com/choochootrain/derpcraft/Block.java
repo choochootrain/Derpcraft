@@ -12,6 +12,8 @@ public class Block {
     public static final int BRICK = 5;
     public static final int GLASS = 6;
     
+    public static final int NUM_BLOCKS = 7;
+    
     public static ColorRGBA getColor(int type) {
         switch(type) {
             case GRASS:
