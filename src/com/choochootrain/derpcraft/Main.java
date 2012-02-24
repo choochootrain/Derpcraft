@@ -27,6 +27,7 @@ import com.jme3.math.Ray;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
@@ -102,6 +103,9 @@ public class Main extends SimpleApplication implements ActionListener {
                         shootables.attachChild(geom);
                         geom.setUserData("color", c);
                         geom.setUserData("block type", type);
+                        
+                        if(Block.isTransparent(type))
+                            geom.setQueueBucket(Bucket.Transparent);
                         
                         if(j >= 5) {
                             BoxCollisionShape collisionShape = new BoxCollisionShape(new Vector3f(UNIT_EXTENT,UNIT_EXTENT,UNIT_EXTENT));
@@ -201,15 +205,15 @@ public class Main extends SimpleApplication implements ActionListener {
         debris = new ParticleEmitter("Debris", Type.Triangle, 15);
         debris.setSelectRandomImage(true);
         debris.setRandomAngle(true);
-        debris.setRotateSpeed(FastMath.TWO_PI);
+        debris.setRotateSpeed(FastMath.TWO_PI / 4);
         debris.setStartColor(new ColorRGBA(1f, 0.59f, 0.28f, 1));
         debris.setEndColor(new ColorRGBA(0.7f, 0.7f, 0.7f, 1.0f));
-        debris.setStartSize(5f);
+        debris.setStartSize(4f);
         debris.setEndSize(3f);
 
         debris.setShape(new EmitterSphereShape(Vector3f.ZERO, 1.5f));
         debris.setParticlesPerSec(0);
-        debris.setGravity(0, 10f, 0);
+        debris.setGravity(0, 5f, 0);
         debris.setLowLife(1.4f);
         debris.setHighLife(1.5f);
         debris.setImagesX(3);

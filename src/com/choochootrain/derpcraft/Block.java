@@ -34,4 +34,8 @@ public class Block {
                 return ColorRGBA.Black;
         }
     }
+    
+    public static boolean isTransparent(int type) {
+        return (type == WATER) || (type == GLASS);
+    }
 }
