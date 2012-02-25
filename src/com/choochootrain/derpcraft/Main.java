@@ -5,7 +5,6 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
-import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.collision.CollisionResult;
@@ -24,14 +23,11 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
-import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
-import com.jme3.scene.shape.Box;
 import java.util.StringTokenizer;
 
 public class Main extends SimpleApplication implements ActionListener {
@@ -214,8 +210,8 @@ public class Main extends SimpleApplication implements ActionListener {
         debris.setShape(new EmitterSphereShape(Vector3f.ZERO, 1.5f));
         debris.setParticlesPerSec(0);
         debris.setGravity(0, 5f, 0);
-        debris.setLowLife(1.4f);
-        debris.setHighLife(1.5f);
+        debris.setLowLife(0.6f);
+        debris.setHighLife(0.8f);
         debris.setImagesX(3);
         debris.setImagesY(3);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
@@ -234,7 +230,7 @@ public class Main extends SimpleApplication implements ActionListener {
                 settings.getHeight() / 2 + ch.getLineHeight() / 2, 0);
         guiNode.attachChild(ch);
     }
-    
+        
     private float[] getCoordinates(String name) {
         StringTokenizer st = new StringTokenizer(name);
         float coords[] = new float[3];
