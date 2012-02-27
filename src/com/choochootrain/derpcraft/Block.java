@@ -29,7 +29,7 @@ public class Block {
             case BRICK:
                 return new ColorRGBA(0.8f, 0.1f, 0.1f, 1.0f);
             case GLASS:
-                return new ColorRGBA(0.8f, 0.9f, 0.8f, 0.2f);                
+                return new ColorRGBA(0.6f, 1.0f, 0.6f, 0.2f);                
             default:
                 return ColorRGBA.Black;
         }

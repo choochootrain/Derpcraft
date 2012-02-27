@@ -158,13 +158,9 @@ public class Main extends SimpleApplication implements ActionListener {
             player.jump();
         }
         else if (binding.equals("Shoot") && !value) {
-            // 1. Reset results list.
             CollisionResults results = new CollisionResults();
-            // 2. Aim the ray from cam loc to cam direction.
             Ray ray = new Ray(cam.getLocation(), cam.getDirection());
-            // 3. Collect intersections between Ray and Shootables in results list.
             shootables.collideWith(ray, results);
-            // 5. Use the results (we mark the hit object)
             if (results.size() > 0) {
                 CollisionResult closest = results.getClosestCollision();
                 Geometry g = closest.getGeometry();
@@ -179,6 +175,26 @@ public class Main extends SimpleApplication implements ActionListener {
                 inventory.addBlock(g);
             }
         }
+        else if (binding.equals("Place") && !value) {
+            CollisionResults results = new CollisionResults();
+            Ray ray = new Ray(cam.getLocation(), cam.getDirection());
+            shootables.collideWith(ray, results);
+            if (results.size() > 0) {
+                CollisionResult closest = results.getClosestCollision();
+                Geometry g = closest.getGeometry();
+                float[] coords = getCoordinates(g.getName().substring(3));
+                
+                Geometry geom = factory.buildSimpleCube(
+                        "Box"+(int)coords[0]+" "+(int)coords[1]+" "+(int)coords[2],
+                        new Vector3f(coords[0]*10+10,coords[1]*10,coords[2]*10), 
+                        UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT, 
+                        Block.getColor(Block.GRASS));
+                
+                geom.setUserData("color", Block.getColor(Block.GRASS));
+                geom.setUserData("block type", Block.GRASS);
+                shootables.attachChild(geom);
+            }            
+        }
     }
     
     private void initKeys() {
@@ -188,12 +204,14 @@ public class Main extends SimpleApplication implements ActionListener {
         inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_S));
         inputManager.addMapping("Jump", new KeyTrigger(KeyInput.KEY_SPACE));
         inputManager.addMapping("Shoot", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+        inputManager.addMapping("Place", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
         inputManager.addListener(this, "Left");
         inputManager.addListener(this, "Right");
         inputManager.addListener(this, "Up");
         inputManager.addListener(this, "Down");
         inputManager.addListener(this, "Jump");
         inputManager.addListener(this, "Shoot");
+        inputManager.addListener(this, "Place");
     }
     
     private void initDebris() {
@@ -224,7 +242,7 @@ public class Main extends SimpleApplication implements ActionListener {
         guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
         BitmapText ch = new BitmapText(guiFont, false);
         ch.setSize(guiFont.getCharSet().getRenderedSize() * 2);
-        ch.setText("+"); // crosshairs
+        ch.setText("+");
         ch.setLocalTranslation( // center
                 settings.getWidth() / 2 - guiFont.getCharSet().getRenderedSize() / 3 * 2,
                 settings.getHeight() / 2 + ch.getLineHeight() / 2, 0);
@@ -235,9 +253,9 @@ public class Main extends SimpleApplication implements ActionListener {
         StringTokenizer st = new StringTokenizer(name);
         float coords[] = new float[3];
         try {
-            coords[0] = (float)Integer.parseInt(st.nextToken());
-            coords[1] = (float)Integer.parseInt(st.nextToken());
-            coords[2] = (float)Integer.parseInt(st.nextToken());
+            coords[0] = Float.parseFloat(st.nextToken());
+            coords[1] = Float.parseFloat(st.nextToken());
+            coords[2] = Float.parseFloat(st.nextToken());
         } catch(Exception e) {
             e.printStackTrace();
         }
