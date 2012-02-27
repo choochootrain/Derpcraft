@@ -44,9 +44,9 @@ public class Main extends SimpleApplication implements ActionListener {
     private ParticleEmitter debris;
     private Node debrisNode;
     private Node inventoryNode;
-    
+
     public static float UNIT_EXTENT = 5.0f;
-    
+
     public static void main(String[] args) {
         Main app = new Main();
         app.start();
@@ -59,34 +59,34 @@ public class Main extends SimpleApplication implements ActionListener {
         stateManager.attach(bulletAppState);
         bulletAppState.getPhysicsSpace().enableDebug(assetManager);
         bulletAppState.getPhysicsSpace().setAccuracy(0.01f);
-        
+
         viewPort.setBackgroundColor(new ColorRGBA(0.4f, 0.8f, 1f, 1f));
         flyCam.setMoveSpeed(100);
         initKeys();
         initDebris();
         initCrosshairs();
         renderManager.preloadScene(rootNode);
-        
+
         factory = new Factory(assetManager);
-        
+
         inventoryNode = new Node("inventory");
-        inventory = new Inventory(inventoryNode, factory, 
+        inventory = new Inventory(inventoryNode, factory,
                 guiFont, settings.getWidth(), settings.getHeight());
         guiNode.attachChild(inventoryNode);
-        
+
         blocks = new CompoundCollisionShape();
-        
+
         Vector3f floorVector = new Vector3f(0, -6f, 0);
         Geometry floor = factory.buildSimpleCube("floor", floorVector, 50f, 0.5f, 50f, ColorRGBA.Black);
         rootNode.attachChild(floor);
         BoxCollisionShape floorShape = new BoxCollisionShape(new Vector3f(50f, 0.5f, 50f));
         blocks.addChildShape(floorShape, floorVector);
-        
+
         BoxCollisionShape s = new BoxCollisionShape(new Vector3f(5f, 0.5f, 5f));
         blocks.addChildShape(s, new Vector3f(0,-6,0));
-        
+
         shootables = new Node("shootables");
-        
+
         for(int i = -15; i < 16; i++) {
             for(int k = -15; k < 16; k++) {
                 for(int j = 4; j < 6; j++) {
@@ -99,10 +99,10 @@ public class Main extends SimpleApplication implements ActionListener {
                         shootables.attachChild(geom);
                         geom.setUserData("color", c);
                         geom.setUserData("block type", type);
-                        
+
                         if(Block.isTransparent(type))
                             geom.setQueueBucket(Bucket.Transparent);
-                        
+
                         if(j >= 5) {
                             BoxCollisionShape collisionShape = new BoxCollisionShape(new Vector3f(UNIT_EXTENT,UNIT_EXTENT,UNIT_EXTENT));
                             blocks.addChildShape(collisionShape, location);
@@ -110,17 +110,17 @@ public class Main extends SimpleApplication implements ActionListener {
                     }
                 }
             }
-        }       
+        }
 
         landscape = new RigidBodyControl(blocks, 0);
-        
+
         CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(4f, 7f, 1);
         player = new CharacterControl(capsuleShape, 0.05f);
         player.setJumpSpeed(75);
         player.setFallSpeed(40);
         player.setGravity(10);
         player.setPhysicsLocation(new Vector3f(0, 75, 0));
-        
+
         rootNode.attachChild(shootables);
         rootNode.attachChild(debrisNode);
         bulletAppState.getPhysicsSpace().add(landscape);
@@ -144,7 +144,7 @@ public class Main extends SimpleApplication implements ActionListener {
     public void simpleRender(RenderManager rm) {
         //TODO: add render code
     }
-    
+
     public void onAction(String binding, boolean value, float tpf) {
         if (binding.equals("Left")) {
             if (value) { left = true; } else { left = false; }
@@ -171,7 +171,7 @@ public class Main extends SimpleApplication implements ActionListener {
                 float[] coords = getCoordinates(g.getName().substring(3));
                 debris.setLocalTranslation(coords[0]*10, coords[1]*10, coords[2]*10);
                 debris.emitAllParticles();
-                
+
                 inventory.addBlock(g);
             }
         }
@@ -183,20 +183,20 @@ public class Main extends SimpleApplication implements ActionListener {
                 CollisionResult closest = results.getClosestCollision();
                 Geometry g = closest.getGeometry();
                 float[] coords = getCoordinates(g.getName().substring(3));
-                
+                coords[0]++;
                 Geometry geom = factory.buildSimpleCube(
                         "Box"+(int)coords[0]+" "+(int)coords[1]+" "+(int)coords[2],
-                        new Vector3f(coords[0]*10+10,coords[1]*10,coords[2]*10), 
-                        UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT, 
+                        new Vector3f(coords[0]*10,coords[1]*10,coords[2]*10),
+                        UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT,
                         Block.getColor(Block.GRASS));
-                
+
                 geom.setUserData("color", Block.getColor(Block.GRASS));
                 geom.setUserData("block type", Block.GRASS);
                 shootables.attachChild(geom);
-            }            
+            }
         }
     }
-    
+
     private void initKeys() {
         inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_A));
         inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_D));
@@ -213,7 +213,7 @@ public class Main extends SimpleApplication implements ActionListener {
         inputManager.addListener(this, "Shoot");
         inputManager.addListener(this, "Place");
     }
-    
+
     private void initDebris() {
         debrisNode = new Node("debris node");
         debris = new ParticleEmitter("Debris", Type.Triangle, 15);
@@ -237,7 +237,7 @@ public class Main extends SimpleApplication implements ActionListener {
         debris.setMaterial(mat);
         debrisNode.attachChild(debris);
     }
-    
+
     protected void initCrosshairs() {
         guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
         BitmapText ch = new BitmapText(guiFont, false);
@@ -248,7 +248,7 @@ public class Main extends SimpleApplication implements ActionListener {
                 settings.getHeight() / 2 + ch.getLineHeight() / 2, 0);
         guiNode.attachChild(ch);
     }
-        
+
     private float[] getCoordinates(String name) {
         StringTokenizer st = new StringTokenizer(name);
         float coords[] = new float[3];
@@ -259,10 +259,10 @@ public class Main extends SimpleApplication implements ActionListener {
         } catch(Exception e) {
             e.printStackTrace();
         }
-        
+
         return coords;
     }
-    
+
     public BitmapFont getGuiFont() {
         return guiFont;
     }
