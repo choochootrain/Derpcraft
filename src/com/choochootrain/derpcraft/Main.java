@@ -183,7 +183,13 @@ public class Main extends SimpleApplication implements ActionListener {
                 CollisionResult closest = results.getClosestCollision();
                 Geometry g = closest.getGeometry();
                 float[] coords = getCoordinates(g.getName().substring(3));
-                coords[0]++;
+                Vector3f norm = closest.getContactNormal();
+                float x = Vector3f.UNIT_X.project(norm).normalize().x;
+                float y = Vector3f.UNIT_Y.project(norm).normalize().y;
+                float z = Vector3f.UNIT_Z.project(norm).normalize().z;
+                coords[0] -= (ray.direction.x > 0 ? x : -x);
+                coords[1] -= (ray.direction.y > 0 ? y : -y);
+                coords[2] -= (ray.direction.z > 0 ? z : -z);
                 Geometry geom = factory.buildSimpleCube(
                         "Box"+(int)coords[0]+" "+(int)coords[1]+" "+(int)coords[2],
                         new Vector3f(coords[0]*10,coords[1]*10,coords[2]*10),
@@ -192,6 +198,7 @@ public class Main extends SimpleApplication implements ActionListener {
 
                 geom.setUserData("color", Block.getColor(Block.GRASS));
                 geom.setUserData("block type", Block.GRASS);
+                inventory.removeBlock(geom);
                 shootables.attachChild(geom);
             }
         }
