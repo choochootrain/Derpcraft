@@ -8,7 +8,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 
 public class Inventory {
-    
+
     private int[] blocks;
     private Node inventory;
     private Geometry[] geoms;
@@ -19,7 +19,9 @@ public class Inventory {
     private int height;
     private int widthMargin;
     private int heightMargin;
-    
+    protected ColorRGBA currentBlockColor;
+    protected int currentBlockType;
+
     public Inventory(Node inv, Factory f, BitmapFont g, int w, int h) {
         width = w/12 * 10;
         widthMargin = w/12;
@@ -31,21 +33,23 @@ public class Inventory {
         inventory = inv;
         factory = f;
         guiFont = g;
-        
+        currentBlockType = Block.BRICK;
+        currentBlockColor = Block.getColor(Block.BRICK);
+
         Vector3f center = new Vector3f(width/2, height/12, -1);
         ColorRGBA color = ColorRGBA.Gray;
         Geometry background = factory.buildSimpleCube("Inventory Background", center,
                 width/2, height/12, 1, color);
-        background.setUserData("color", color); 
-        
+        background.setUserData("color", color);
+
         for(int i = 0; i < geoms.length; i++) {
             Vector3f location = new Vector3f(width/Block.NUM_BLOCKS * i + widthMargin, height/6, 0);
             ColorRGBA c = Block.getColor(i);
             geoms[i] = factory.buildSimpleCube("Inventory "+i, location,
                     30, 30, 30, c);
-            geoms[i].setUserData("color", c); 
+            geoms[i].setUserData("color", c);
         }
-        
+
         for(int i = 0; i < counts.length; i++) {
             counts[i] = new BitmapText(guiFont, false);
             counts[i].setSize(guiFont.getCharSet().getRenderedSize() * 2);
@@ -53,24 +57,28 @@ public class Inventory {
             counts[i].setLocalTranslation(width/Block.NUM_BLOCKS * i + widthMargin + 15, height/6 + 10, 0);
         }
     }
-    
+
     public void addBlock(Geometry block) {
         int type = block.getUserData("block type");
-        
+
         blocks[type]++;
         counts[type].setText("" + blocks[type]);
         updateInventory();
     }
-    
+
     public void removeBlock(Geometry block) {
         int type = block.getUserData("block type");
         blocks[type]--;
         counts[type].setText("" + blocks[type]);
         updateInventory();
     }
-    
+
     private void updateInventory() {
         for(int i = 0; i < blocks.length; i++) {
+            if (i == currentBlockType)
+                counts[i].setColor(ColorRGBA.Green);
+            else
+                counts[i].setColor(ColorRGBA.Black);
             int b = blocks[i];
             if (b == 0) {
                 inventory.detachChild(geoms[i]);
@@ -81,5 +89,11 @@ public class Inventory {
                 inventory.attachChild(counts[i]);
             }
         }
+    }
+
+    public void changeBlock() {
+        currentBlockType = (currentBlockType + 1) & Block.NUM_BLOCKS;
+        currentBlockColor = Block.getColor(currentBlockType);
+        updateInventory();
     }
 }

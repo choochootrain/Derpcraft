@@ -156,8 +156,7 @@ public class Main extends SimpleApplication implements ActionListener {
             if (value) { down = true; } else { down = false; }
         } else if (binding.equals("Jump")) {
             player.jump();
-        }
-        else if (binding.equals("Shoot") && !value) {
+        } else if (binding.equals("Shoot") && !value) {
             CollisionResults results = new CollisionResults();
             Ray ray = new Ray(cam.getLocation(), cam.getDirection());
             shootables.collideWith(ray, results);
@@ -174,8 +173,7 @@ public class Main extends SimpleApplication implements ActionListener {
 
                 inventory.addBlock(g);
             }
-        }
-        else if (binding.equals("Place") && !value) {
+        } else if (binding.equals("Place") && !value) {
             CollisionResults results = new CollisionResults();
             Ray ray = new Ray(cam.getLocation(), cam.getDirection());
             shootables.collideWith(ray, results);
@@ -194,13 +192,18 @@ public class Main extends SimpleApplication implements ActionListener {
                         "Box"+(int)coords[0]+" "+(int)coords[1]+" "+(int)coords[2],
                         new Vector3f(coords[0]*10,coords[1]*10,coords[2]*10),
                         UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT,
-                        Block.getColor(Block.GRASS));
+                        inventory.currentBlockColor);
 
-                geom.setUserData("color", Block.getColor(Block.GRASS));
-                geom.setUserData("block type", Block.GRASS);
+                geom.setUserData("color", inventory.currentBlockColor);
+                geom.setUserData("block type", inventory.currentBlockType);
                 inventory.removeBlock(geom);
                 shootables.attachChild(geom);
+
+                if(Block.isTransparent(inventory.currentBlockType))
+                    geom.setQueueBucket(Bucket.Transparent);
             }
+        } else if (binding.equals("Change") && !value) {
+                inventory.changeBlock();
         }
     }
 
@@ -212,6 +215,7 @@ public class Main extends SimpleApplication implements ActionListener {
         inputManager.addMapping("Jump", new KeyTrigger(KeyInput.KEY_SPACE));
         inputManager.addMapping("Shoot", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         inputManager.addMapping("Place", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+        inputManager.addMapping("Change", new KeyTrigger(KeyInput.KEY_C));
         inputManager.addListener(this, "Left");
         inputManager.addListener(this, "Right");
         inputManager.addListener(this, "Up");
@@ -219,6 +223,7 @@ public class Main extends SimpleApplication implements ActionListener {
         inputManager.addListener(this, "Jump");
         inputManager.addListener(this, "Shoot");
         inputManager.addListener(this, "Place");
+        inputManager.addListener(this, "Change");
     }
 
     private void initDebris() {
