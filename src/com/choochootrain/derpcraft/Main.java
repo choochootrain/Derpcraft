@@ -5,6 +5,7 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
+import com.jme3.bullet.collision.shapes.PlaneCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.collision.CollisionResult;
@@ -28,6 +29,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial.CullHint;
 import java.util.StringTokenizer;
 
 public class Main extends SimpleApplication implements ActionListener {
@@ -57,8 +59,6 @@ public class Main extends SimpleApplication implements ActionListener {
         bulletAppState = new BulletAppState();
         bulletAppState.setThreadingType(BulletAppState.ThreadingType.PARALLEL);
         stateManager.attach(bulletAppState);
-        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-        bulletAppState.getPhysicsSpace().setAccuracy(0.01f);
 
         viewPort.setBackgroundColor(new ColorRGBA(0.4f, 0.8f, 1f, 1f));
         flyCam.setMoveSpeed(100);
@@ -92,7 +92,7 @@ public class Main extends SimpleApplication implements ActionListener {
                 for(int j = 4; j < 6; j++) {
                     if(Math.random() > 0) {
                         Vector3f location = new Vector3f(i*10,j*10,k*10);
-                        int type = (int)(Math.random() * 7);
+                        int type = (int)(Math.abs(i + j + k) % Block.NUM_BLOCKS);
                         ColorRGBA c = Block.getColor(type);
                         Geometry geom = factory.buildSimpleCube("Box"+i+" "+j+" "+k, location,
                                 UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT, c);
@@ -107,19 +107,26 @@ public class Main extends SimpleApplication implements ActionListener {
                             BoxCollisionShape collisionShape = new BoxCollisionShape(new Vector3f(UNIT_EXTENT,UNIT_EXTENT,UNIT_EXTENT));
                             blocks.addChildShape(collisionShape, location);
                         }
+                        else {
+                            geom.setCullHint(CullHint.Never);
+                        }
                     }
                 }
             }
         }
 
         landscape = new RigidBodyControl(blocks, 0);
+        landscape.setCollideWithGroups(0x01);
+        landscape.setCollisionGroup(0x01);
 
         CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(4f, 7f, 1);
-        player = new CharacterControl(capsuleShape, 0.05f);
+        player = new CharacterControl(capsuleShape, 0.5f);
         player.setJumpSpeed(75);
-        player.setFallSpeed(40);
-        player.setGravity(10);
+        player.setFallSpeed(75);
+        player.setGravity(50);
         player.setPhysicsLocation(new Vector3f(0, 75, 0));
+        player.setCollisionGroup(0x01);
+        player.setCollideWithGroups(0x01);
 
         rootNode.attachChild(shootables);
         rootNode.attachChild(debrisNode);
@@ -188,10 +195,10 @@ public class Main extends SimpleApplication implements ActionListener {
                 coords[0] -= (ray.direction.x > 0 ? x : -x);
                 coords[1] -= (ray.direction.y > 0 ? y : -y);
                 coords[2] -= (ray.direction.z > 0 ? z : -z);
+                Vector3f location = new Vector3f(coords[0]*10,coords[1]*10,coords[2]*10);
                 Geometry geom = factory.buildSimpleCube(
                         "Box"+(int)coords[0]+" "+(int)coords[1]+" "+(int)coords[2],
-                        new Vector3f(coords[0]*10,coords[1]*10,coords[2]*10),
-                        UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT,
+                        location, UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT,
                         inventory.currentBlockColor);
 
                 geom.setUserData("color", inventory.currentBlockColor);
@@ -201,6 +208,11 @@ public class Main extends SimpleApplication implements ActionListener {
 
                 if(Block.isTransparent(inventory.currentBlockType))
                     geom.setQueueBucket(Bucket.Transparent);
+
+                BoxCollisionShape collisionShape = new BoxCollisionShape(new Vector3f(UNIT_EXTENT,UNIT_EXTENT,UNIT_EXTENT));
+                blocks.addChildShape(collisionShape, location);
+                bulletAppState.getPhysicsSpace().remove(landscape);
+                bulletAppState.getPhysicsSpace().add(landscape);
             }
         } else if (binding.equals("Change") && !value) {
                 inventory.changeBlock();

@@ -19,6 +19,7 @@ public class Inventory {
     private int height;
     private int widthMargin;
     private int heightMargin;
+    private final int START_VALUE = 10;
     protected ColorRGBA currentBlockColor;
     protected int currentBlockType;
 
@@ -35,6 +36,10 @@ public class Inventory {
         guiFont = g;
         currentBlockType = Block.BRICK;
         currentBlockColor = Block.getColor(Block.BRICK);
+
+        for(int i = 0; i < blocks.length; i++) {
+            blocks[i] = START_VALUE;
+        }
 
         Vector3f center = new Vector3f(width/2, height/12, -1);
         ColorRGBA color = ColorRGBA.Gray;
@@ -53,7 +58,7 @@ public class Inventory {
         for(int i = 0; i < counts.length; i++) {
             counts[i] = new BitmapText(guiFont, false);
             counts[i].setSize(guiFont.getCharSet().getRenderedSize() * 2);
-            counts[i].setText("0");
+            counts[i].setText("" + START_VALUE);
             counts[i].setLocalTranslation(width/Block.NUM_BLOCKS * i + widthMargin + 15, height/6 + 10, 0);
         }
     }
@@ -79,20 +84,14 @@ public class Inventory {
                 counts[i].setColor(ColorRGBA.Green);
             else
                 counts[i].setColor(ColorRGBA.Black);
-            int b = blocks[i];
-            if (b == 0) {
-                inventory.detachChild(geoms[i]);
-                inventory.detachChild(counts[i]);
-            }
-            else {
-                inventory.attachChild(geoms[i]);
-                inventory.attachChild(counts[i]);
-            }
+
+            inventory.attachChild(geoms[i]);
+            inventory.attachChild(counts[i]);
         }
     }
 
     public void changeBlock() {
-        currentBlockType = (currentBlockType + 1) & Block.NUM_BLOCKS;
+        currentBlockType = (currentBlockType + 1) % Block.NUM_BLOCKS;
         currentBlockColor = Block.getColor(currentBlockType);
         updateInventory();
     }
