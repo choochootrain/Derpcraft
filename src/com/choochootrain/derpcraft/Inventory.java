@@ -51,7 +51,7 @@ public class Inventory {
             Vector3f location = new Vector3f(width/Block.NUM_BLOCKS * i + widthMargin, height/6, 0);
             ColorRGBA c = Block.getColor(i);
             geoms[i] = factory.buildSimpleCube("Inventory "+i, location,
-                    30, 30, 30, c);
+                    30, 30, 30, i);
             geoms[i].setUserData("color", c);
         }
 

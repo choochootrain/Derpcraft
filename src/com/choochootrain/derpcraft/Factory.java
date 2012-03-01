@@ -9,21 +9,36 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 
 public class Factory {
- 
-  private AssetManager assetManager;
-    
-  public Factory(AssetManager assetManager) {
+
+    private AssetManager assetManager;
+
+    public Factory(AssetManager assetManager) {
       this.assetManager = assetManager;
-  }
-    
-  public Geometry buildSimpleCube(String name, Vector3f center, 
-          float xExtent, float yExtent, float zExtent, ColorRGBA color) {
-    Box box = new Box(center, xExtent, yExtent, zExtent);
-    Geometry cube = new Geometry(name, box);
-    Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-    mat.setColor("Color", color);
-    mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-    cube.setMaterial(mat);
-    return cube;
-  }
+    }
+
+    public Geometry buildSimpleCube(String name, Vector3f center,
+        float xExtent, float yExtent, float zExtent, ColorRGBA color) {
+        Box box = new Box(center, xExtent, yExtent, zExtent);
+        Geometry cube = new Geometry(name, box);
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.setColor("Color", color);;
+        mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+        cube.setMaterial(mat);
+        cube.setUserData("color", color);
+        cube.setUserData("block type", -1);
+        return cube;
+    }
+
+    public Geometry buildSimpleCube(String name, Vector3f center,
+        float xExtent, float yExtent, float zExtent, int type) {
+        Box box = new Box(center, xExtent, yExtent, zExtent);
+        Geometry cube = new Geometry(name, box);
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.setTexture("ColorMap", assetManager.loadTexture("Textures/" + Block.getTextureFile(type)));
+        mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+        cube.setMaterial(mat);
+        cube.setUserData("color", Block.getColor(type));
+        cube.setUserData("block type", type);
+        return cube;
+    }
 }

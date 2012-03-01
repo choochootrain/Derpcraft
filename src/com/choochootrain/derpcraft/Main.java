@@ -1,6 +1,7 @@
 package com.choochootrain.derpcraft;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
@@ -68,6 +69,7 @@ public class Main extends SimpleApplication implements ActionListener {
         renderManager.preloadScene(rootNode);
 
         factory = new Factory(assetManager);
+        Block.assetManager = assetManager;
 
         inventoryNode = new Node("inventory");
         inventory = new Inventory(inventoryNode, factory,
@@ -95,7 +97,7 @@ public class Main extends SimpleApplication implements ActionListener {
                         int type = (int)(Math.abs(i + j + k) % Block.NUM_BLOCKS);
                         ColorRGBA c = Block.getColor(type);
                         Geometry geom = factory.buildSimpleCube("Box"+i+" "+j+" "+k, location,
-                                UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT, c);
+                                UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT, type);
                         shootables.attachChild(geom);
                         geom.setUserData("color", c);
                         geom.setUserData("block type", type);
@@ -106,9 +108,6 @@ public class Main extends SimpleApplication implements ActionListener {
                         if(j >= 5) {
                             BoxCollisionShape collisionShape = new BoxCollisionShape(new Vector3f(UNIT_EXTENT,UNIT_EXTENT,UNIT_EXTENT));
                             blocks.addChildShape(collisionShape, location);
-                        }
-                        else {
-                            geom.setCullHint(CullHint.Never);
                         }
                     }
                 }
@@ -199,10 +198,8 @@ public class Main extends SimpleApplication implements ActionListener {
                 Geometry geom = factory.buildSimpleCube(
                         "Box"+(int)coords[0]+" "+(int)coords[1]+" "+(int)coords[2],
                         location, UNIT_EXTENT, UNIT_EXTENT, UNIT_EXTENT,
-                        inventory.currentBlockColor);
+                        inventory.currentBlockType);
 
-                geom.setUserData("color", inventory.currentBlockColor);
-                geom.setUserData("block type", inventory.currentBlockType);
                 inventory.removeBlock(geom);
                 shootables.attachChild(geom);
 
@@ -289,5 +286,9 @@ public class Main extends SimpleApplication implements ActionListener {
 
     public BitmapFont getGuiFont() {
         return guiFont;
+    }
+
+    public AssetManager getAssetManager() {
+        return assetManager;
     }
 }
