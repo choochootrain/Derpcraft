@@ -89,6 +89,9 @@ public class Main extends SimpleApplication implements ActionListener {
 
         shootables = new Node("shootables");
 
+        Geometry tool = factory.buildTool(new Vector3f(-5*10,10*10, 20*10));
+        shootables.attachChild(tool);
+
         for(int i = -15; i < 16; i++) {
             for(int k = -15; k < 16; k++) {
                 for(int j = 4; j < 6; j++) {
@@ -122,7 +125,7 @@ public class Main extends SimpleApplication implements ActionListener {
         player = new CharacterControl(capsuleShape, 0.5f);
         player.setJumpSpeed(75);
         player.setFallSpeed(75);
-        player.setGravity(50);
+        player.setGravity(10);
         player.setPhysicsLocation(new Vector3f(0, 75, 0));
         player.setCollisionGroup(0x01);
         player.setCollideWithGroups(0x01);

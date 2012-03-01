@@ -41,4 +41,16 @@ public class Factory {
         cube.setUserData("block type", type);
         return cube;
     }
+
+    public Geometry buildTool(Vector3f center) {
+        Box box = new Box(center, 50, 50, 50);
+        Geometry cube = new Geometry("tool", box);
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.setTexture("ColorMap", assetManager.loadTexture("Textures/tool.png"));
+        mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+        cube.setMaterial(mat);
+        cube.setUserData("color", ColorRGBA.Pink);
+        cube.setUserData("block type", 0);
+        return cube;
+    }
 }
