@@ -61,6 +61,8 @@ public class Inventory {
             counts[i].setText("" + START_VALUE);
             counts[i].setLocalTranslation(width/Block.NUM_BLOCKS * i + widthMargin + 15, height/6 + 10, 0);
         }
+
+        updateInventory();
     }
 
     public void addBlock(Geometry block) {

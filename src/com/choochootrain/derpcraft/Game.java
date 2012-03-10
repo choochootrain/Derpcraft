@@ -6,7 +6,6 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
-import com.jme3.bullet.collision.shapes.PlaneCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.collision.CollisionResult;
@@ -30,10 +29,9 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial.CullHint;
 import java.util.StringTokenizer;
 
-public class Main extends SimpleApplication implements ActionListener {
+public class Game extends SimpleApplication implements ActionListener {
 
     private Factory factory;
     private Inventory inventory;
@@ -51,7 +49,7 @@ public class Main extends SimpleApplication implements ActionListener {
     public static float UNIT_EXTENT = 5.0f;
 
     public static void main(String[] args) {
-        Main app = new Main();
+        Game app = new Game();
         app.start();
     }
 
